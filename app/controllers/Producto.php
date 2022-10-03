@@ -7,6 +7,7 @@ class Producto extends Controlador{
 
    public function __construct(){
       $this->modelo = $this->modelo('ProductoModel');
+
    }
 
    //vista general de la pagina
@@ -41,7 +42,7 @@ class Producto extends Controlador{
          define('NUM_ITEMS_BY_PAGE' , 9);
 
          //debemos sanitizar el get
-         $identificador = $_GET['grupo'];
+         $identificador = Sanitizar::limpiarCadena($_GET['grupo']);
          $totalRows = $this->modelo->totalGrupo($identificador);
 
          //logica del paginador
@@ -52,7 +53,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if(isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -113,7 +114,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if(isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -163,7 +164,7 @@ class Producto extends Controlador{
          define('NUM_ITEMS_BY_PAGE' , 9);
 
          //debemos sanitizar el get
-         $identificador = $_GET['grupo'];
+         $identificador = Sanitizar::limpiarCadena($_GET['grupo']);
          $totalRows = $this->modelo->totalGrupo($identificador);
 
          //logica del paginador
@@ -174,7 +175,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if(isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -234,7 +235,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if(isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -300,7 +301,10 @@ class Producto extends Controlador{
    }
 
    //Metodo utilizada para ejecutar la busqueda personalizada dentro de home
-   public function personalizada($marca , $submarca){
+   public function personalizada($marca = '' , $submarca = ''){
+      $marca = Sanitizar::limpiarCadena($marca);
+      $submarca = Sanitizar::limpiarCadena($submarca);
+
       $productos = $this->modelo->searchPersonalizada($marca, $submarca);
 
       $data = [
@@ -319,7 +323,7 @@ class Producto extends Controlador{
       {
          define('NUM_ITEMS_BY_PAGE' , 15);
          //debemos sanitizar el get
-         $identificador = $_GET['claveB'];
+         $identificador = Sanitizar::limpiarCadena($_GET['claveB']);
          $totalRows = $this->modelo->totalSearchFast($identificador);
 
          //logica del paginador
@@ -330,7 +334,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if (isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -380,9 +384,9 @@ class Producto extends Controlador{
       if(isset($_GET['grupo']))
       {
          //obtenemos primero el valor al que pertenece la peticion para determinar de que catalogo es y de esa forma poder llenar el sidebar lateral
-         $catalogo = $this->modelo->belongsCatalogo($_GET['grupo']);
+         $catalogo = $this->modelo->belongsCatalogo(Sanitizar::limpiarCadena($_GET['grupo']));
          $catalogo = isset($catalogo[0]['catalogo'])?$catalogo[0]['catalogo'] : '' ;
-         $identificador = isset($_GET['grupo'])?$_GET['grupo'] : '';
+         $identificador = isset($_GET['grupo']) ? Sanitizar::limpiarCadena($_GET['grupo']) : '';
 
          //utilizamos esta variable para llenar el sidebar lateral
          $familias = $this->modelo->getFamiliaForCatalogo($catalogo);
@@ -404,7 +408,7 @@ class Producto extends Controlador{
             //examino la pagina a mostrar y el inicio del registro a mostrar
             if(isset($_GET["page"]))
             {
-               $page = $_GET["page"];
+               $page = Sanitizar::limpiarCadena($_GET["page"]);
             }
 
             if(!$page)
@@ -535,6 +539,149 @@ class Producto extends Controlador{
       }
 
    }//cierra funcion enviarContacto
+
+   // 1.1 metodos utilizado en la vista administrador modulo marcas
+   public function getSubMarcas()
+   {
+      header('Content-Type: application/json');
+      $resultado = $this->modelo->getAllSubmarcas();
+      echo json_encode($resultado);
+   }
+
+
+   public function getMarcas()
+   {
+      header('Content-Type: application/json');
+      $resultado = $this->modelo->getMarcas();
+      echo json_encode($resultado);
+   }
+
+   //fin de metodos 1.1
+
+
+   /*
+       *************************************************************
+       Metodos para administrador
+       ******************************
+    */
+   public function login()
+   {
+
+      session_start();
+
+      if(isset($_SESSION['sesionHO1']))
+      {
+         header("Location:".RUTA.'administrador/index');
+         die();
+      }
+      else
+      {
+         $opciones = [
+            'cost' => 8
+         ];
+
+         $token = password_hash( uniqid(true) . time() , PASSWORD_BCRYPT , $opciones  );
+
+         $data = ['token' => $token];
+
+
+         $this->vista('loginVista' , $data);
+      }
+   }
+
+
+   public function sesion()
+   {
+      /*
+        El funcionamiento de este metodo es el siguiente
+        Primero comprobamos que los tres valores que se deberían enviar por el formulario, esten seteados.
+        Si estan seteados, comprobamos que el token creado, sea igual al que se envia por el formulario
+        Si ese token es igual, comprobamos que las credenciales (user , password), esten almacenadas en la BD
+        Si lo estan, retornamos un true.
+
+        Tambien hay un contador en el cual, por cada intento fallido del usuario, sumamos 1, si ese contador llega a 5 , añadimos la ip del usuario en la lista negra.
+
+
+      */
+
+      session_start();
+
+
+      $this->modelo = $this->modelo('AdministradorModelo');
+
+      //validamos primero que exista el token csrf, de esa forma evitamos que un usuario intente ingresar a este archivo desde fuera del login
+      if(isset($_POST['tokenHO']))
+      {
+         if(!isset($_SESSION['contadorHO']))
+         {
+            $_SESSION['contadorHO'] = 1;
+         }
+         else
+         {
+            if($_SESSION['contadorHO'] > 5)
+            {
+               //guardamos la ip, y mandamos al usuario a una pagina de error
+               $ip = $_SERVER['REMOTE_ADDR'];
+               //$objeto->bloquearIP($ip);
+               $_SESSION['contadorHO'] = 0;
+               echo 'block';
+               die();
+            }
+            else
+            {
+               $_SESSION['contadorHO'] = $_SESSION['contadorHO'] + 1;
+            }
+         }
+
+         if(isset($_POST['userHO'] , $_POST['passwordHO'] , $_POST['recaptchaHO']))
+         {
+            //limpiamos los datos que nos manden
+            $_POST['userHO'] = Sanitizar::limpiarCadena($_POST['userHO']);
+            $_POST['recaptchaHO'] = Sanitizar::limpiarCadena($_POST['recaptchaHO']);
+            $_POST['passwordHO'] = Sanitizar::limpiarCadena($_POST['passwordHO']);
+
+            if(Sanitizar::validarRecaptcha($_POST['recaptchaHO']))
+            {
+               $resultado = $this->modelo->comprobarUser($_POST['userHO'] , $_POST['passwordHO']);
+
+               if($resultado != false)
+               {
+                  unset($_SESSION['contadorHO']);
+                  $_SESSION['sesionHO1'] = 'true';
+                  $_SESSION['nameUserHO'] = $resultado[0]['nombre'];
+                  $_SESSION['avatarHO'] = $resultado[0]['avatar'];
+                  echo 'true';
+               }
+               else
+               {
+                  $_SESSION['contadorHO']++;
+                  echo 'false';
+               }
+            }
+            else
+            {
+               echo 'false';
+            }
+         }
+         else
+         {
+            echo 'false';
+         }
+      }
+      else
+      {
+         header("Location:". RUTA .'producto/login');
+         die();
+      }
+
+   } //cierra metodo sesion
+
+
+   /*
+       *************************************************************
+       fin de Metodos para login
+       ******************************
+    */
 
 
 

@@ -6,6 +6,7 @@
    <link rel="shortcut icon" href="<?php echo RUTA;?>img/RAHSA2.ico">
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <meta name="robots" content="noindex">
 
    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
 

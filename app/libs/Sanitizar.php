@@ -40,6 +40,18 @@ class Sanitizar{
       date_default_timezone_set('America/Mexico_City');
       return date('Y-m-d h:i:s');
    }
+
+
+   //Cambiamos nombre a una imagen en caso de que en el modal de administradores de editar, se haya modificado el codigo del producto
+   static public function changeNameImg($oldCodigo , $newCodigo)
+   {
+      if(file_exists("img/productos/$oldCodigo.jpg"))
+      {
+         rename("img/productos/$oldCodigo.jpg" , "img/productos/$newCodigo.jpg");
+      }
+
+   }
+
 }
 
 

@@ -79,6 +79,83 @@ class Peticiones extends Controlador{
 
       echo json_encode($array);
    }
+
+
+
+   //Peticiones generales utilizadas en el modulo de Administrador
+
+   public function getPosiciones()
+   {
+      $this->modelo = $this->modelo('AdministradorModelo');
+      header('Content-Type: application/json');
+      $resultado = $this->modelo->getPosiciones();
+      echo json_encode($resultado);
+   }
+
+
+   public function getDataMarcas()
+   {
+
+      if(isset($_POST['codigo']))
+      {
+
+        header('Content-Type: application/json');
+        $this->modelo = $this->modelo('AdministradorModelo');
+        $data = $this->modelo->getData($_POST['codigo']);
+
+        echo json_encode($data);
+
+      }
+   }
+
+
+
+   //Eliminamos un producto de la base de datos
+   public function deleteProducto($producto)
+   {
+
+       $objeto = new ProductoModel();
+
+       $producto['imagen'] = Sanitizar::limpiarCadena($producto['imagen']);
+       $producto['codigo'] = Sanitizar::limpiarCadena($producto['codigo']);
+
+       if($objeto->deleteProduct($producto['codigo'])>0){
+          //eliminamos imagen si es que existe
+          Sanitizar::deleteImg($producto['imagen']);
+          return true;
+       }
+       else
+       {
+          return '0';
+       }
+   }
+
+
+
+   public function getFamilias()
+   {
+      header('Content-Type: application/json');
+      $resultado = $this->modelo->getAllFamily();
+      echo json_encode($resultado);
+   }
+
+
+
+   public function getSubFamilias()
+   {
+      if(isset($_POST))
+      {
+        header('Content-Type: application/json');
+        $resultado = $this->modelo->getSubFamiliaE($_POST['familia']);
+        echo json_encode($resultado);
+
+      }
+      else
+      {
+         echo 'false';
+      }
+   }
+
 }
 
 

@@ -5,6 +5,7 @@
     <link rel="shortcut icon" href="<?php echo RUTA;?>img/RAHSA2.ico">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex">
     <meta name="description" content="HOAUTOPARTES - Fabricante de partes para frenos y suspensión. Líderes en el aftermarket para equipo ligero automotriz"/>
     <meta name="keywords" content="Frenos, Suspension, Bujes HO Poliuretáno, Pistón Fenolico"/>
 	 <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>

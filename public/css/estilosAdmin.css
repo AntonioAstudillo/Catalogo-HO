@@ -1,0 +1,39 @@
+textarea{
+  resize: none;
+}
+
+
+.popup-image{
+  position: fixed;
+  top: 0; left: 0;
+  background: rgba(0,0,0,.9);
+  height: 100%;
+  width: 100%;
+  z-index:100;
+}
+
+
+.formRegistro label{
+  font-weight: bold;
+}
+
+
+.marginExt
+{
+  margin-top: 28px;
+}
+
+
+.desactive{
+   display: none;
+}
+
+
+.disabled{
+
+  opacity: 0.2;
+}
+
+.mt-resU{
+  margin-top: 8px;
+}

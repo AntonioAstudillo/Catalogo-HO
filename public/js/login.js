@@ -1,10 +1,8 @@
-(()=>{
+   import {ruta} from './config.js'
 
   window.onload = main;
 
   function main(){
-
-
 
     if(document.getElementById('btnIngresarL') != null)
     {
@@ -18,8 +16,8 @@
     e.preventDefault();
 
     grecaptcha.ready(function()
-    {
-       grecaptcha.execute('6Lc3M2YhAAAAAL9cM3u-5tX7RCJQMN_r00QZTtWf',
+    {  //aqui va clave publica de recaptcha v3
+       grecaptcha.execute('',
        {
          action: 'submit'
 
@@ -30,13 +28,15 @@
 
          formData.append('recaptchaHO' , token);
 
-         req.open('POST', ruta + 'administrador/sesion');
+         req.open('POST', ruta + 'producto/sesion');
 
          req.onreadystatechange = function()
          {
-            if(req.readyState == 4 && req.status == 200)
+            if(req.readyState === 4 && req.status === 200)
             {
-               if(req.responseText == 'true')
+               console.log(req.responseText);
+
+               if(req.responseText === 'true')
                {
                   Swal.fire({
                      position: 'center',
@@ -45,7 +45,7 @@
                      showConfirmButton: false,
                      timer: 1500
                  }).then(()=>{
-                    window.location.href = 'admin.php';
+                   window.location.href = ruta +'administrador/home';
                  });
 
              }
@@ -72,4 +72,3 @@
 
     });
   }//cierra funcion signIn
-})();

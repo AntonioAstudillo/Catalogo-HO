@@ -5,11 +5,12 @@
      <link rel="shortcut icon" href="<?php echo RUTA; ?>img/RAHSA2.ico">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex">
 	  <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
      <link rel="stylesheet" href="<?php echo RUTA; ?>css/estilos.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- en el render debe ir la clave publica del recaptcha -->
+     <!---Ponemos clave publica de recaptcha v3 -->
      <script src="https://www.google.com/recaptcha/api.js?render="></script>
 	</head>
 

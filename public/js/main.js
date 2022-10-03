@@ -55,8 +55,8 @@
 		e.preventDefault();
 
 		grecaptcha.ready(function()
-		{   //aqui debe ir la clave publica del recaptcha
-			 grecaptcha.execute('',
+		{
+			 grecaptcha.execute('6LcazT8iAAAAANdWuJVBmYyGv-xHaM_p3TZNED7q',
 			 {
 				 action: 'submit'
 

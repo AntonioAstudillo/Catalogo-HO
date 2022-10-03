@@ -115,10 +115,22 @@ class ProductoModel
 
 
    /**
-    * [getSubmarcas Obtengo todas las submarcas para poder llenar el select de busqueda personalizada referente a las submarcas]
-    * @param  [type] $marca               [description]
-    * @return [type]        [description]
+    * [getSubmarcas Obtengo todas las submarcas registradas en la tabla productodetalle]
+    * @return [array]        [arreglo asociativo con todas las marcas]
     */
+   public function getAllSubmarcas()
+   {
+      $consulta = "SELECT DISTINCT(submarca) FROM productodetalle WHERE submarca <> ?  ORDER BY submarca asc";
+
+      $statement = $this->conexion->prepare($consulta);
+      $statement->execute(array(''));
+
+      return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+   }
+
+
+
    public function getSubmarcas($marca)
    {
       $consulta = "SELECT DISTINCT submarca FROM productodetalle WHERE marca = ? AND submarca <> ' ' ORDER BY submarca ASC;";
@@ -397,21 +409,54 @@ class ProductoModel
       return $statement->rowCount();
    }
 
+    //obtenemos las subfamilias para mostrarlas en el modal de editar producto
+   public function getSubFamiliaE($familia){
+     $query = 'SELECT DISTINCT(grupo) FROM productos WHERE familia = ? and grupo <> ? ORDER BY grupo asc';
+     $statement = $this->conexion->prepare($query);
+     $statement->execute(array($familia , ''));
+
+     return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
 
 
+   public function deleteProduct($producto)
+   {
+      try
+      {
+        $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->conexion->beginTransaction();
+
+        $consulta = "DELETE FROM productos WHERE codigo = ?";
+        $statement = $this->conexion->prepare($consulta);
+        $statement->execute(array($producto));
+
+        $consulta = "DELETE FROM productodetalle WHERE producto = ?";
+        $statement = $this->conexion->prepare($consulta);
+        $statement->execute(array($producto));
+
+        $consulta = "DELETE FROM destacados WHERE producto = ?";
+        $statement = $this->conexion->prepare($consulta);
+        $statement->execute(array($producto));
+
+        $consulta = "DELETE FROM diametros WHERE codigo = ?";
+        $statement = $this->conexion->prepare($consulta);
+        $statement->execute(array($producto));
 
 
+        $this->conexion->commit();
+
+      }
+      catch(Exception $e)
+      {
+        $this->conexion->rollBack();
+        return false;
+      }
+
+      return true;
+   }
 
 
-
-
-
-
-
-
-
-
-}
+}//cierra clase ProductoModel
 
 
  ?>

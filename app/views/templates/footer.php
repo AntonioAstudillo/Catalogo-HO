@@ -29,7 +29,7 @@
           <li><i class="bx bx-chevron-right"></i> <a href="<?php echo RUTA; ?>producto/videos">Videos</a></li>
           <li><i class="bx bx-chevron-right"></i> <a href="<?php echo RUTA; ?>producto/privacidad">Aviso de Privacidad</a></li>
           <li><i class="bx bx-chevron-right"></i> <a href="<?php echo RUTA; ?>producto/contacto">Contacto</a></li>
-          <li><i class="bx bx-chevron-right"></i> <a href="<?php echo RUTA; ?>administrador">Administradores</a></li>
+          <li><i class="bx bx-chevron-right"></i> <a href="<?php echo RUTA; ?>producto/login">Administradores</a></li>
         </ul>
       </div>
 
