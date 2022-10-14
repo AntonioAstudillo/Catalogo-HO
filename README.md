@@ -7,7 +7,7 @@ Este proyecto en arquitectura es muy parecido al de dentiware.com
 
 Esta desarrollado con php, javascript, bootstrap, jquery(datatables) html y css. 
 
-Este catalogo en linea cuenta con un modulo de administrador con el cual se podrá administrar los productos que ofrece la empresa. 
+Este catalogo en linea cuenta con un modulo con el cual se podrá administrar los productos que ofrece la empresa. 
 
 
 El proyecto esta diseñado bajo la arquitectura de Modelo Vista Controlador. 
